@@ -11,36 +11,41 @@ export const Tabs: React.FC<TabsProps> = ({
   tabs: tabList,
   selectedTabId,
   onTabSelected,
-}) => (
-  <div data-cy="TabsComponent">
-    <div className="tabs is-boxed">
-      <ul>
-        {tabList.map(tab => (
-          <li
-            key={tab.id}
-            className={tab.id === selectedTabId ? 'is-active' : ''}
-            data-cy="Tab"
-          >
-            <a
-              href={`#${tab.id}`}
-              data-cy="TabLink"
-              onClick={e => {
-                e.preventDefault();
-                if (tab.id !== selectedTabId) {
-                  onTabSelected(tab);
-                }
-              }}
+}) => {
+  const effectiveSelectedId = tabList.some(t => t.id === selectedTabId)
+    ? selectedTabId
+    : tabList[0]?.id;
+
+  return (
+    <div data-cy="TabsComponent">
+      <div className="tabs is-boxed">
+        <ul>
+          {tabList.map(tab => (
+            <li
+              key={tab.id}
+              className={tab.id === effectiveSelectedId ? 'is-active' : ''}
+              data-cy="Tab"
             >
-              {tab.title}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+              <a
+                href={`#${tab.id}`}
+                data-cy="TabLink"
+                onClick={e => {
+                  e.preventDefault();
+                  if (tab.id !== effectiveSelectedId) {
+                    onTabSelected(tab);
+                  }
+                }}
+              >
+                {tab.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-    <div className="block" data-cy="TabContent">
-      {tabList.find(tab => tab.id === selectedTabId)?.content}
+      <div className="block" data-cy="TabContent">
+        {tabList.find(tab => tab.id === effectiveSelectedId)?.content}
+      </div>
     </div>
-  </div>
-);
-
+  );
+};
